@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Spotify History</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+        <style>
+            body, html{
+                height: 100%;
+            }
+            ul{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            li{
+                list-style: none;
+            }
+            p{
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+
+        <ul id="history" style="display:none;">
+        </ul>
+
+        <script id="history-template" type="text/x-handlebars-template">
+
+            <ul>
+                {{#each songs}}
+                    <li>
+                        <p>Played at: {{this.played_at}}</p>
+                        <a href={{this.url}}>{{this.name}}</a> &nbsp; by: &nbsp; {{#each artists}} {{this}} {{#unless @last}}, {{/unless}} {{/each}}
+                    </li>
+                    <img src={{this.image_url}}>
+                {{/each}}
+
+            </ul>
+
+        </script>
+        
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment-with-locales.min.js"></script>
+        <script async defer>
+
+            const source = document.querySelector`#history-template`.innerHTML;
+            const template = Handlebars.compile(source);
+            const history = document.querySelector`#history`;
+
+            $.ajax({
+                type: "get",
+                url: "/history",
+                success: function (res) {
+                    
+                    const FORMAT = 'YYYY-MM-DD hh:mm:ss A';
+                    const cleaned = []
+                    for(let song of res){
+                        const {name, played_at, url, image_url, artists} = song;
+                        const cleanedDate = played_at.match(/\d+-\d+\-\d+\d+\w\d+:\d+:\d+/)[0].replace(/[A-Za-z]/, ' ');
+                        const convertedToLocale = moment.utc(cleanedDate).local().format(FORMAT);
+                        cleaned.push({name, url, image_url, artists, played_at : convertedToLocale});
+                    }
+                    history.innerHTML = template({songs : cleaned.sort((a,b) => new Date(a.played_at.replace(/[AMP ]{3}$/g, '')) - new Date(b.played_at.replace(/[AMP ]{3}$/g, '')) ).reverse()});
+                    history.style.display = 'flex';
+                },
+                error: function(e){console.warn(e)}
+                
+            });
+        </script>
+    </body>
+</html>
