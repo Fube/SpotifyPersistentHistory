@@ -5,45 +5,49 @@
         <title>Spotify History</title>
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="stylesheet" href="">
-        <style>
-            body, html{
-                height: 100%;
-            }
-            ul{
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-                align-items: center;
-            }
-            li{
-                list-style: none;
-            }
-            p{
-                text-align: center;
-            }
-        </style>
+        <link rel="stylesheet/less" type="text/css" href="styles.less" />
+        <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/3.9.0/less.min.js" ></script>
     </head>
     <body>
 
-        <ul id="history" style="display:none;">
-        </ul>
+        <table id="history" style="display:none;">
 
         <script id="history-template" type="text/x-handlebars-template">
 
-            <ul>
-                {{#each songs}}
-                    <li>
-                        <p>Played at: {{this.played_at}}</p>
-                        <a href={{this.url}}>{{this.name}}</a> &nbsp; by: &nbsp; {{#each artists}} {{this}} {{#unless @last}}, {{/unless}} {{/each}}
-                    </li>
-                    <img src={{this.image_url}}>
-                {{/each}}
+            <table cellspacing="0" cellpadding="0">
 
-            </ul>
+                <tbody>
+                    <tr>
+                        <th>Title</th>
+                        <th>Artist</th>
+                        <th>Played At</th>
+                    </tr>
+                    {{#each songs}}
+                        <tr onclick="window.open('{{this.url}}')" href={{this.url}}>
+                            
+                            <td>
+                                <div>
+                                    <img src={{this.image_url}}>
+                                    <p>{{this.name}}</p>
+                                </div>
+                            </td>
+                            
+                            <td>
+                                {{#each artists}} 
+                                    {{this}}
+                                    {{#unless @last}}, 
+                                    {{/unless}}
+                                {{/each}}
+                            </td>
 
+                            <td>{{this.display_time}}</td>
+
+                        </tr>
+                    {{/each}}
+                </tbody>
+
+            </table>
         </script>
-        
         
         <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.3/handlebars.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
@@ -60,14 +64,17 @@
                 success: function (res) {
                     
                     const FORMAT = 'YYYY-MM-DD hh:mm:ss A';
-                    const cleaned = []
+                    const cleaned = [];
+
                     for(let song of res){
                         const {name, played_at, url, image_url, artists} = song;
                         const cleanedDate = played_at.match(/\d+-\d+\-\d+\d+\w\d+:\d+:\d+/)[0].replace(/[A-Za-z]/, ' ');
-                        const convertedToLocale = moment.utc(cleanedDate).local().format(FORMAT);
-                        cleaned.push({name, url, image_url, artists, played_at : convertedToLocale});
+                        const display_time = moment.utc(cleanedDate).local().format(FORMAT);
+                        cleaned.push({name, url, image_url, artists, played_at, display_time});
                     }
-                    history.innerHTML = template({songs : cleaned.sort((a,b) => new Date(a.played_at.replace(/[AMP ]{3}$/g, '')) - new Date(b.played_at.replace(/[AMP ]{3}$/g, '')) ).reverse()});
+
+                    history.innerHTML = template({songs : cleaned.sort((a,b) => new Date(b.played_at) - new Date(a.played_at))});
+
                     history.style.display = 'flex';
                 },
                 error: function(e){console.warn(e)}

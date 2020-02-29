@@ -1,0 +1,95 @@
+@import url("https://fonts.googleapis.com/css?family=Spartan&display=swap");
+@import url("https://fonts.googleapis.com/css?family=Montserrat&display=swap");
+
+@Spotify-Green: #1DB954;
+@Spotify-Green-Dim: rgb(28, 151, 71);
+@Spotify-Black: #080808;
+
+html{
+    //For Firefox
+    overflow-y: scroll;
+    scrollbar-color: @Spotify-Green @Spotify-Black;
+    scrollbar-width: thin;
+
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+    
+    /* Track */
+    &::-webkit-scrollbar-track {
+        background: @Spotify-Black; 
+    }
+    &::-webkit-scrollbar-thumb {
+        background: @Spotify-Green; 
+    }
+    
+    /* Handle on hover */
+    &::-webkit-scrollbar-thumb:hover {
+        background: @Spotify-Green-Dim;
+    }
+}
+
+html, body, table, tbody{
+    background-color: #070b14;
+    width: 100%;
+    left:0;right:0;margin:auto;
+    font-family: Montserrat, Spartan, Helvetica, sans-serif;
+}
+
+table{
+    border:none
+}
+
+tr{
+
+    display: flex;
+
+    -webkit-filter: brightness(80%);
+    filter: brightness(80%);
+
+    color: @Spotify-Green;
+    background-color: @Spotify-Black;
+
+    &:first-of-type{
+        background-color: rgb(49, 49, 49);
+    }
+    &:nth-child(even){
+        background-color: #0f0f0f;
+    }
+    &:hover:not(:first-of-type){
+        -webkit-filter: brightness(110%);
+        filter: brightness(110%);
+    }
+
+    td, th{
+
+        &:first-child{
+            text-align: left;
+            padding-left: 5%;
+        }
+
+        text-align: center;
+
+        &:last-child{
+            text-align: right;
+            padding-right: 5%;
+        }
+
+        align-self: center;
+        margin: 1.25vh auto;
+        flex: 1;
+
+        div{
+            display: flex;
+
+            img{
+                margin-right: 2vh;
+            }
+            p{
+                align-self: center; 
+                margin: 0;
+            }
+        }
+    }
+
+}
