@@ -3,7 +3,8 @@ const express = require('express');
 const path = require('path');
 const dotenv = require('dotenv').config();
 
-const uri = `mongodb+srv://${process.env.DB_UNAME}:${process.env.DB_PASS}@spotifypersistenthistory-civb3.mongodb.net/test?retryWrites=true&w=majority`;
+console.log(process.env.DB_UNAME, process.env.DB_PASS);
+const uri = `mongodb+srv://fube:${process.env.DB_PASS}@spotifypersistenthistor.civb3.mongodb.net/${process.env.DB_UNAME}?retryWrites=true&w=majority`;
 
 const client = new MongoClient(uri, { useUnifiedTopology: true });
 client.connect();

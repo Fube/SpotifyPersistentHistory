@@ -1,5 +1,6 @@
 const MongoClient = require('mongodb').MongoClient;
 const dotenv = require('dotenv').config();
+const path = require('path');
 const request = require('request');
 const express = require('express');
 const https = require('https');
@@ -24,31 +25,21 @@ const app = express();
  * @param {*[]} songs 
  */
 function ship(songs){
-
-        with(client){
-            const collection = db("spotify").collection("songs");
-            for(let song of songs){
-                with(song){
-                    collection.insertOne({
-                        played_at,
-                        name,
-                        artists,
-                        image_url,
-                        url,
-                    }, {expireAfterSeconds: 2592000});
-                }
-            }
-        }
+  client.db('spotify').collection('songs').insertMany(songs)
 }
 
 function generateRandomString(length) {
-    var text = '';
-    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   
-    for (var i = 0; i < length; i++) {
+    for (let i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
+}
+
+function deleteOldRecords(){
+  client.db('spotify').collection('songs').deleteMany({ "played_at": { $lt: new Date(new Date().setMonth(new Date().getMonth() - 3)).toString() } })
 }
 
 //Renews the access token using the refresh token
@@ -91,7 +82,8 @@ app.get('/login', function(req, res) {
         scope: scope,
         redirect_uri: redirect_uri,
         state: state
-      }));
+    }));
+    deleteOldRecords();
 });
 
 
@@ -177,8 +169,8 @@ app.get('/callback', async function(req, res) {
 
 console.log(`Listening on ${PORT}`);
 const options = {
-  key: fs.readFileSync('./server.key'),
-  cert: fs.readFileSync('./server.cert')
+  key: fs.readFileSync(`${__dirname}/server.key`),
+  cert: fs.readFileSync(`${__dirname}/server.cert`)
 };
 const serv = https.createServer(options, app);
 serv.listen(PORT, () => {});
