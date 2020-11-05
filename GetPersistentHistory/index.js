@@ -168,6 +168,17 @@ app.get('/callback', async function(req, res) {
   }
 });
 
+app.get('/history', async (req,res) =>{
+
+  with(client){
+
+      const collection = await db('spotify').collection('songs');
+      const array = (await (await collection.find()).toArray());
+      res.send(array);
+
+  }
+});
+
 console.log(`Listening on ${PORT}`);
 const options = {
   key: fs.readFileSync(`${__dirname}/server.key`),
