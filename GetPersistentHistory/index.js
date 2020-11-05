@@ -25,7 +25,8 @@ const app = express();
  * @param {*[]} songs 
  */
 function ship(songs){
-  client.db('spotify').collection('songs').insertMany(songs)
+  if(song.length)
+    client.db('spotify').collection('songs').insertMany(songs)
 }
 
 function generateRandomString(length) {

@@ -23,4 +23,4 @@ app.get('/history', async (req,res) =>{
     }
 });
 
-app.listen(6600, ()=>console.log("Listening"));
+app.listen(80, ()=>console.log("Listening"));
