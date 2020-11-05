@@ -27,8 +27,8 @@ Make a .env file and add the following fields:
 <br>
 Then, go to the root folder and run:
 
-- npm run n
-- npm run m (order doesn't really matter, but make sure you run both)
+- `npm run n`
+- `npm run m` (order doesn't really matter, but make sure you run both)
 <br>
 Then head to `https://localhost:8888` IMPORTANT: make sure it is https<br>
 Click the big green button<br>
