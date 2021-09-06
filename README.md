@@ -1,6 +1,14 @@
 # Spotify Persistent History
 ## Because Spotify doesn't offer an easy way to see your song history
 
+
+### ⚠️ Do not use this ⚠️
+This program is very poorly made <br>
+At the time of writing this, I had no idea what the hell I was doing <br>
+This is possibly the worst way to have implemented this application <br>
+Spotify stores your history beyond 50 songs, it's just paginated <br>
+Stupid me did not realize this at the time
+
 ### How it works
 Spotify actually keeps a list of the last 50 songs you listened. Anything you listened to for 30+ seconds is added to this list<br>
 So every 30\*50 seconds it retrieves your history and adds it to a database (MongoDB)<br>
